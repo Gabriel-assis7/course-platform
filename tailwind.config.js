@@ -1,20 +1,21 @@
-/** @type {import('tailwindcss').Config} */
-export const content = [
-  "./app/**/*.{js,ts,jsx,tsx,mdx}",
-  "./pages/**/*.{js,ts,jsx,tsx,mdx}",
-  "./components/**/*.{js,ts,jsx,tsx,mdx}",
-
-  // Or if using `src` directory:
-  "./src/**/*.{js,ts,jsx,tsx,mdx}",
-];
-export const theme = {
-  container: {
-    center: true,
-    padding: '2rem',
-    screens: {
-      sm: '1500px'
-    }
+// eslint-disable-next-line import/no-anonymous-default-export
+export default {
+  darkMode: ["class"],
+  content: [
+    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/features/**/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
+  theme: {
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        sm: "1500px",
+      },
+    },
+    extend: {},
+    plugins: [],
   },
-  extend: {},
 };
-export const plugins = [];
