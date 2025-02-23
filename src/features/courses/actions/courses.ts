@@ -4,8 +4,8 @@ import { z } from "zod";
 import { courseSchema } from "../schemas/courses";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/services/clerk";
-import { canCreateCourses } from "../permissions/courses";
-import { insertCourse } from "../db/courses";
+import { canCreateCourses, canDeleteCourses } from "../permissions/courses";
+import { insertCourse, deleteCourse as deleteCourseDb } from "../db/courses";
 
 export async function createCourse(unsafeData: z
     .infer<typeof courseSchema>) {
@@ -18,4 +18,15 @@ export async function createCourse(unsafeData: z
     const course = await insertCourse(data)
 
     redirect(`/admin/courses/${course.id}/edit`)
+}
+
+export async function deleteCourse(id: string) {
+
+    if (!canDeleteCourses(await getCurrentUser())) {
+        return { error: true, message: "Error deleting your course" }
+    }
+
+    await deleteCourseDb(id)
+    
+    return { error: false, message: "Successfully deleted your course" }
 }

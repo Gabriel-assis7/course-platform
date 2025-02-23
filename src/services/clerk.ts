@@ -14,7 +14,7 @@ export async function getCurrentUser({ allData = false } = {}) {
         clerkUserId: userId,
         userId: sessionClaims?.dbId,
         role: sessionClaims?.role,
-        user: 
+        user:
           allData && sessionClaims?.dbId != null
             ? await getUser(sessionClaims.dbId)
             : undefined,
