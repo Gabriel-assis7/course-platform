@@ -1,5 +1,5 @@
 {
-  "id": "36a4fd83-3114-4bcf-9524-3bf007327e4e",
+  "id": "5d8257d9-e08e-476e-8e78-b8e7f34415d3",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -214,6 +214,12 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         },
         "youtubeVideoId": {
           "name": "youtubeVideoId",

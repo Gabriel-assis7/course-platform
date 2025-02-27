@@ -10,7 +10,7 @@ import {
 import { Link, Trash2Icon } from "lucide-react";
 import { ActionButton } from "./ActionButton";
 import { deleteCourse } from "@/features/courses/actions/courses";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 
 export function CourseTable({
   courses,

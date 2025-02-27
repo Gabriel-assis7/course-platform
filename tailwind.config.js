@@ -1,3 +1,5 @@
+import containerQueries from "@tailwindcss/container-queries";
+
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
   darkMode: ["class"],
@@ -18,4 +20,5 @@ export default {
     extend: {},
     plugins: [],
   },
+  plugins: [require("tailwindcss-animate"), containerQueries],
 };

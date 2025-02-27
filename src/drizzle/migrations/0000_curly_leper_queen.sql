@@ -31,6 +31,7 @@ CREATE TABLE "course_sections" (
 CREATE TABLE "lessons" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" text NOT NULL,
+	"description" text,
 	"youtubeVideoId" text NOT NULL,
 	"order" integer NOT NULL,
 	"status" "lesson_status" DEFAULT 'private' NOT NULL,
