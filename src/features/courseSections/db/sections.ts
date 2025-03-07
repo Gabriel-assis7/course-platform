@@ -20,7 +20,7 @@ export async function insertSection(
     .insert(CourseSectionTable)
     .values(data)
     .returning();
-    
+
   if (newSection == null) throw new Error("Failed to create section");
 
   revalidateCourseSectionCache({
@@ -65,4 +65,28 @@ export async function deleteSection(id: string) {
   });
 
   return deletedSection;
+}
+
+export async function updateSectionOrders(sectionIds: string[]) {
+  const sections = await Promise.all(
+    sectionIds.map((id, index) =>
+      db
+        .update(CourseSectionTable)
+        .set({ order: index })
+        .where(eq(CourseSectionTable.id, id))
+        .returning({
+          courseId: CourseSectionTable.courseId,
+          id: CourseSectionTable.id,
+        })
+    )
+  );
+
+  await new Promise((res) => setTimeout(res, 2000));
+
+  sections.flat().forEach(({ id, courseId }) => {
+    revalidateCourseSectionCache({
+      courseId,
+      id,
+    });
+  });
 }
