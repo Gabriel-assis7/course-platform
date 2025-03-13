@@ -1,4 +1,5 @@
 import containerQueries from "@tailwindcss/container-queries";
+import tailwindAnimate from "tailwindcss-animate";
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
@@ -20,5 +21,5 @@ export default {
     extend: {},
     plugins: [],
   },
-  plugins: [require("tailwindcss-animate"), containerQueries],
+  plugins: [tailwindAnimate, containerQueries],
 };
