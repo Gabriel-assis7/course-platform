@@ -19,7 +19,7 @@ export function SortableList<T extends { id: string }>({
 }: {
   items: T[];
   onOrderChange: (
-    sectionIds: string[]
+    newOrder: string[]
   ) => Promise<{ error: boolean; message: string }>;
   children: (items: T[]) => ReactNode;
 }) {

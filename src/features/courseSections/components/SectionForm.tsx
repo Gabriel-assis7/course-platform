@@ -11,7 +11,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import RequiredLabelIcon from "@/components/RequiredLabelIcon";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { actionToast } from "@/hooks/use-toast";
@@ -25,6 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { createSection, updateSection } from "../actions/sections";
+import { RequiredLabelIcon } from "@/components/RequiredLabelIcon";
 
 export function SectionForm({
   section,

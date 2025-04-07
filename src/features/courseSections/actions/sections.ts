@@ -10,7 +10,7 @@ import {
 } from "../permissions/sections";
 import {
   getNextCourseSectionOrder,
-  insertSection,
+  insertSection as insertSectionDb,
   updateSection as updateSectionDb,
   deleteSection as deleteSectionDb,
   updateSectionOrders as updateSectionOrdersDb,
@@ -31,7 +31,7 @@ export async function createSection(
 
   const order = await getNextCourseSectionOrder(courseId);
 
-  await insertSection({ ...data, courseId, order });
+  await insertSectionDb({ ...data, courseId, order });
 
   return { error: false, message: "Successfully created your section" };
 }

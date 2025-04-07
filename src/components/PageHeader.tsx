@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
 
-const PageHeader = ({
+export function PageHeader({
   title,
   children,
   className,
@@ -9,7 +9,7 @@ const PageHeader = ({
   title: string;
   children?: ReactNode;
   className?: string;
-}) => {
+}) {
   return (
     <div
       className={cn("mb-8 flex gap-4 items-center justify-between", className)}
@@ -18,6 +18,4 @@ const PageHeader = ({
       {children && <div>{children}</div>}
     </div>
   );
-};
-
-export default PageHeader;
+}

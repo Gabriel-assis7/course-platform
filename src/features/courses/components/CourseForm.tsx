@@ -12,14 +12,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import RequiredLabelIcon from "@/components/RequiredLabelIcon";
+import { RequiredLabelIcon } from "@/components/RequiredLabelIcon";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { createCourse, updateCourse } from "../actions/courses";
 import { actionToast } from "@/hooks/use-toast";
 
-const CourseForm = ({
+export function CourseForm({
   course,
 }: {
   course?: {
@@ -27,7 +27,7 @@ const CourseForm = ({
     name: string;
     description: string;
   };
-}) => {
+}) {
   const form = useForm<z.infer<typeof courseSchema>>({
     resolver: zodResolver(courseSchema),
     defaultValues: course ?? {
@@ -64,7 +64,7 @@ const CourseForm = ({
               <FormMessage />
             </FormItem>
           )}
-        ></FormField>
+        />
         <FormField
           control={form.control}
           name="description"
@@ -80,7 +80,7 @@ const CourseForm = ({
               <FormMessage />
             </FormItem>
           )}
-        ></FormField>
+        />
         <div className="self-end">
           <Button disabled={form.formState.isSubmitting} type="submit">
             Save
@@ -89,6 +89,4 @@ const CourseForm = ({
       </form>
     </Form>
   );
-};
-
-export default CourseForm;
+}

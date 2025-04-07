@@ -1,4 +1,5 @@
-import { formatPlural } from "@/lib/formatters";
+import { ActionButton } from "@/components/ActionButton";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -6,11 +7,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "./ui/table";
-import { Link, Trash2Icon } from "lucide-react";
-import { ActionButton } from "./ActionButton";
-import { deleteCourse } from "@/features/courses/actions/courses";
-import { Button } from "./ui/button";
+} from "@/components/ui/table";
+import { formatPlural } from "@/lib/formatters";
+import { Trash2Icon } from "lucide-react";
+import Link from "next/link";
+import { deleteCourse } from "../actions/courses";
 
 export function CourseTable({
   courses,
@@ -63,7 +64,7 @@ export function CourseTable({
                   <Link href={`/admin/courses/${course.id}/edit`}>Edit</Link>
                 </Button>
                 <ActionButton
-                  variant={"destructiveOutline"}
+                  variant="destructiveOutline"
                   requireAreYouSure
                   action={deleteCourse.bind(null, course.id)}
                 >

@@ -1,5 +1,5 @@
-import PageHeader from "@/components/PageHeader";
-import CourseForm from "@/features/courses/components/CourseForm";
+import { PageHeader } from "@/components/PageHeader";
+import { CourseForm } from "@/features/courses/components/CourseForm";
 
 const NewCoursePage = () => {
   return (
