@@ -32,7 +32,7 @@ const Navbar = () => {
         </Link>
         <Link
           className="hover:bg-accent/10 flex items-center px-2"
-          href="/admin/purchases"
+          href="/admin/products"
         >
           Products
         </Link>
