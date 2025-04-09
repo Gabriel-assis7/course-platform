@@ -1,16 +1,69 @@
 import { db } from "@/drizzle/db";
-import { ProductTable } from "@/drizzle/schema";
+import { CourseProductTable, ProductTable } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
 import { revalidateProductCache } from "./cache";
 
-export function insertProduct(
-  data: Partial<typeof ProductTable.$inferInsert> & { courseIds: string[] }
-) {}
+export async function insertProduct(
+  data: typeof ProductTable.$inferInsert & { courseIds: string[] }
+) {
+  const newProduct = await db.transaction(async (trx) => {
+    const [newProduct] = await trx
+      .insert(ProductTable)
+      .values(data)
+      .returning();
+    if (newProduct == null) {
+      trx.rollback();
+      throw new Error("Failed to create product");
+    }
 
-export function updateProduct(
+    await trx.insert(CourseProductTable).values(
+      data.courseIds.map((courseId) => ({
+        courseId,
+        productId: newProduct.id,
+      }))
+    );
+
+    return newProduct;
+  });
+
+  revalidateProductCache(newProduct.id);
+
+  return newProduct;
+}
+
+export async function updateProduct(
   id: string,
   data: Partial<typeof ProductTable.$inferInsert> & { courseIds: string[] }
-) {}
+) {
+  const updatedProduct = await db.transaction(async (trx) => {
+    const [updatedProduct] = await trx
+      .update(ProductTable)
+      .set(data)
+      .where(eq(ProductTable.id, id))
+      .returning();
+    if (updatedProduct == null) {
+      trx.rollback();
+      throw new Error("Failed to create product");
+    }
+
+    await trx
+      .delete(CourseProductTable)
+      .where(eq(CourseProductTable.productId, updatedProduct.id));
+
+    await trx.insert(CourseProductTable).values(
+      data.courseIds.map((courseId) => ({
+        courseId,
+        productId: updatedProduct.id,
+      }))
+    );
+
+    return updatedProduct;
+  });
+
+  revalidateProductCache(updatedProduct.id);
+
+  return updatedProduct;
+}
 
 export async function deleteProduct(id: string) {
   const [deletedProduct] = await db
