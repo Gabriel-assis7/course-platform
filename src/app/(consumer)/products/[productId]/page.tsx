@@ -169,7 +169,7 @@ async function PurchaseButton({ productId }: { productId: string }) {
     return <p>You already own this product</p>;
   } else {
     return (
-      <Button className="text-xl h-auto py-4 px8 rounded-lg" asChild>
+      <Button className="text-xl h-auto py-4 px-8 rounded-lg" asChild>
         <Link href={`/products/${productId}/purchase`}>Get Now</Link>
       </Button>
     );
