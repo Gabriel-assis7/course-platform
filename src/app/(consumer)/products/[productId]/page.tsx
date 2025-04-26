@@ -4,7 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { SkeletonButton } from "@/components/SkeletonButton";
+import { SkeletonButton } from "@/components/Skeleton";
 import { Button } from "@/components/ui/button";
 import {
   Card,
