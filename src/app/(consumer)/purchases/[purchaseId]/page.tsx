@@ -2,7 +2,14 @@ import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { PageHeader } from "@/components/PageHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { db } from "@/drizzle/db";
 import { PurchaseTable } from "@/drizzle/schema";
 import { getPurchaseIdTag } from "@/features/purchases/db/cache";
@@ -20,13 +27,12 @@ import Stripe from "stripe";
 export default async function PurchasePage({
   params,
 }: {
-  params: Promise<{ purchaseId: string }>
+  params: Promise<{ purchaseId: string }>;
 }) {
-  const { purchaseId } = await params
+  const { purchaseId } = await params;
 
   return (
     <div className="container my-6">
-      <PageHeader title="Purchase History" />
       <Suspense fallback={<LoadingSpinner className="size-36 mx-auto" />}>
         <SuspenseBoundary purchaseId={purchaseId} />
       </Suspense>
@@ -34,33 +40,31 @@ export default async function PurchasePage({
   );
 }
 
-async function SuspenseBoundary({
-  purchaseId
-}: {
-  purchaseId: string
-}) {
+async function SuspenseBoundary({ purchaseId }: { purchaseId: string }) {
   const { userId, redirectToSignIn, user } = await getCurrentUser({
     allData: true,
-  })
+  });
 
-  if (userId == null || user == null) return redirectToSignIn()
+  if (userId == null || user == null) return redirectToSignIn();
 
-  const purchase = await getPurchase({ userId, id: purchaseId })
+  const purchase = await getPurchase({ userId, id: purchaseId });
 
-  if (purchase == null) return notFound()
+  if (purchase == null) return notFound();
 
   const { receiptUrl, pricingRows } = await getStripeDetails(
     purchase.stripeSessionId,
     purchase.pricePaidInCents,
-    purchase.refundedAt != null,
-  )
+    purchase.refundedAt != null
+  );
 
   return (
     <>
       <PageHeader title={purchase.productDetails.name}>
         {receiptUrl && (
           <Button asChild variant="outline">
-            <Link target="_blank" href={receiptUrl}>View Receipt</Link>
+            <Link target="_blank" href={receiptUrl}>
+              View Receipt
+            </Link>
           </Button>
         )}
       </PageHeader>
@@ -107,12 +111,12 @@ async function SuspenseBoundary({
         </CardFooter>
       </Card>
     </>
-  )
+  );
 }
 
-async function getPurchase({ userId, id }: { userId: string, id: string }) {
-  "use cache"
-  cacheTag(getPurchaseIdTag(id))
+async function getPurchase({ userId, id }: { userId: string; id: string }) {
+  "use cache";
+  cacheTag(getPurchaseIdTag(id));
 
   return db.query.PurchaseTable.findFirst({
     columns: {
@@ -120,86 +124,102 @@ async function getPurchase({ userId, id }: { userId: string, id: string }) {
       refundedAt: true,
       productDetails: true,
       createdAt: true,
-      stripeSessionId: true
+      stripeSessionId: true,
     },
-    where: and(eq(PurchaseTable.id, id), eq(PurchaseTable.userId, userId))
-  })
+    where: and(eq(PurchaseTable.id, id), eq(PurchaseTable.userId, userId)),
+  });
 }
 
-async function getStripeDetails(stripeSessionId: string, pricePaidInCents: number,
-  isRefunded: boolean) {
-  const { payment_intent, total_details, amount_total, amount_subtotal } = await stripeServerClient.checkout.sessions.retrieve(stripeSessionId, {
-    expand: [
-      "payment_intent.latest.charge",
-      "total_details.breakdown.discounts",
-    ],
-  })
+async function getStripeDetails(
+  stripeSessionId: string,
+  pricePaidInCents: number,
+  isRefunded: boolean
+) {
+  const { payment_intent, total_details, amount_total, amount_subtotal } =
+    await stripeServerClient.checkout.sessions.retrieve(stripeSessionId, {
+      expand: [
+        "payment_intent.latest.charge",
+        "total_details.breakdown.discounts",
+      ],
+    });
 
-  const refundAmount = typeof payment_intent !== "string" && typeof payment_intent?.latest_charge !== "string" ? payment_intent?.latest_charge?.amount_refunded : isRefunded ? pricePaidInCents : undefined
+  const refundAmount =
+    typeof payment_intent !== "string" &&
+    typeof payment_intent?.latest_charge !== "string"
+      ? payment_intent?.latest_charge?.amount_refunded
+      : isRefunded
+      ? pricePaidInCents
+      : undefined;
 
   return {
     receiptUrl: getReceiptUrl(payment_intent),
     pricingRows: getPricingRows(total_details, {
       total: (amount_total ?? pricePaidInCents) - (refundAmount ?? 0),
       subtotal: amount_subtotal ?? pricePaidInCents,
-      refund: refundAmount
-    })
-  }
+      refund: refundAmount,
+    }),
+  };
 }
 
 function getReceiptUrl(paymentIntent: Stripe.PaymentIntent | string | null) {
   if (
-    typeof paymentIntent === "string" || typeof paymentIntent?.latest_charge === "string"
+    typeof paymentIntent === "string" ||
+    typeof paymentIntent?.latest_charge === "string"
   ) {
-    return
+    return;
   }
 
-  return paymentIntent?.latest_charge?.receipt_url
+  return paymentIntent?.latest_charge?.receipt_url;
 }
 
-function getPricingRows(total_details: Stripe.Checkout.Session.TotalDetails | null, {
-  total,
-  subtotal,
-  refund,
-}: {
-  total: number, subtotal: number, refund?: number
-}) {
+function getPricingRows(
+  total_details: Stripe.Checkout.Session.TotalDetails | null,
+  {
+    total,
+    subtotal,
+    refund,
+  }: {
+    total: number;
+    subtotal: number;
+    refund?: number;
+  }
+) {
   const pricingRows: {
-    label: string
-    amountInDollars: number
-    isBold?: boolean
-  }[] = []
+    label: string;
+    amountInDollars: number;
+    isBold?: boolean;
+  }[] = [];
 
   if (total_details?.breakdown != null) {
-    total_details.breakdown.discounts.forEach(discount => {
+    total_details.breakdown.discounts.forEach((discount) => {
       pricingRows.push({
         label: `${discount.discount.coupon.name} (${discount.discount.coupon.percent_off}% off)`,
         amountInDollars: discount.amount / -100,
-      })
-    })
+      });
+    });
   }
 
   if (refund) {
     pricingRows.push({
       label: "Refund",
       amountInDollars: refund / -100,
-    })
+    });
   }
 
   if (pricingRows.length === 0) {
-    return [{ label: "Total", amountInDollars: total / 100, isBold: true }]
+    return [{ label: "Total", amountInDollars: total / 100, isBold: true }];
   }
 
   return [
     {
       label: "SubTotal",
-      amountInDollars: subtotal / 100
+      amountInDollars: subtotal / 100,
     },
     ...pricingRows,
     {
       label: "Total",
       amountInDollars: total / 100,
-      isBold: true
-    }
-  ]
+      isBold: true,
+    },
+  ];
 }
