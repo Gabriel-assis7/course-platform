@@ -17,7 +17,7 @@ import { formatDate, formatPlural, formatPrice } from "@/lib/formatters";
 import Image from "next/image";
 import { refundPurchase } from "../actions/purchases";
 
-export default function UserPurchaseTable({
+export default function PurchaseTable({
   purchases,
 }: {
   purchases: {
